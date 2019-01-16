@@ -1,0 +1,33 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: grpc-app
+  namespace: yby-mdhume-k8s
+spec:
+  servers:
+  - port:
+      number: 80
+      name: http-grpc
+      protocol: grpc
+    hosts:
+     - hello-world-grpc.media.yahoo.com
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: grpc-app
+  namespace: yby-mdhume-k8s
+spec:
+  hosts:
+  - hello-md.yby-mdhume-k8s.svc.yahoo.local
+  - hello-world-grpc.media.yahoo.com
+  gateways:
+  - grpc-app
+  - mesh
+  http:
+  - route:
+    - destination:
+        port:
+          number: 7777
+          name: grpc
+        host: hello-md.yby-mdhume-k8s.svc.yahoo.local
